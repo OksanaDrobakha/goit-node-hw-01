@@ -1,12 +1,12 @@
-const fs = require("fs/promises");
+const fs = require("fs");
 const path = require("path");
 
-const contactsPath = require("./db/contacts.json");
-const contactsFile = require("./db/contacts.json");
+const contactsPath = path.join(__dirname, "db/contacts.json");
+const contactsFile = require(contactsPath);
 
 async function listContacts() {
   try {
-    const data = await fs.promises.readFile(contactsPath);
+    const data = fs.readFileSync(contactsPath);
     const list = JSON.parse(data.toString());
     const result = [...list].sort((a, b) => a.name.localeCompare(b.name));
     console.table(result);
@@ -17,7 +17,7 @@ async function listContacts() {
 
 async function getContactById(contactId) {
   try {
-    const data = await fs.promises.readFile(contactsPath);
+    const data = fs.readFileSync(contactsPath);
     const contacts = JSON.parse(data.toString());
 
     const contactsFilter = contacts.filter(
@@ -36,7 +36,7 @@ async function getContactById(contactId) {
 
 async function removeContact(contactId) {
   try {
-    const data = await fs.promises.readFile(contactsPath);
+    const data = fs.readFileSync(contactsPath);
     const contacts = JSON.parse(data.toString());
 
     const contactIndex = contacts.findIndex(
@@ -70,8 +70,8 @@ async function addContact(name, email, phone) {
   };
 
   try {
-    contactsDataBase.push(contact);
-    const contactsUpdate = JSON.stringify(contactsDataBase);
+    contactsFile.push(contact);
+    const contactsUpdate = JSON.stringify(contactsFile);
     await fs.promises.writeFile(contactsPath, contactsUpdate);
     console.log(`${name} has been added to your contacts`);
   } catch (error) {
